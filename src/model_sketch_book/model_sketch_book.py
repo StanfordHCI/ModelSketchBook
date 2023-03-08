@@ -15,21 +15,21 @@ import altair as alt
 from nltk.corpus import wordnet
 import openai
 
-from msb_enums import (
+from .msb_enums import (
     InputType,
     OutputType,
     ModelType,
     SketchSortMode,
 )
-from SketchBook import SketchBook
-from Sketch import Sketch
-from Concept import (
+from .SketchBook import SketchBook
+from .Sketch import Sketch
+from .Concept import (
     ImageConcept,
     GPTTextConcept,
     LogicalConcept,
     KeywordConcept,
 )
-import helper_functions as h
+from .helper_functions import *
 
 # Set up IPyWidgets
 widgets.interact_manual.opts["manual_name"] = "See results"
@@ -43,7 +43,7 @@ def create_model_sketchbook(
     credentials=None,
 ):
     if credentials is None:
-        h.set_openai_credentials()
+        set_openai_credentials()
     else:
         openai.organization = credentials["organization"]
         openai.api_key = credentials["api_key"]

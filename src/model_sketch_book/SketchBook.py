@@ -7,9 +7,9 @@ import base64
 import numpy as np
 from typing import List, Dict
 
-from msb_enums import InputType, idMode
-from Dataset import Dataset
-import helper_functions as h
+from .msb_enums import InputType, idMode
+from .Dataset import Dataset
+from .helper_functions import *
 
 
 # Class definition of a sketchbook
@@ -65,7 +65,7 @@ class SketchBook:
         default=False,
         cache_data=True,
     ):
-        id_string = h.create_id(self, idMode.Dataset)
+        id_string = create_id(self, idMode.Dataset)
         self._validate_dataframe(df)
 
         if self.ground_truth in df.columns:
@@ -113,7 +113,7 @@ class SketchBook:
                     # Fetch the image from the provided remote URL
                     response = requests.get(item_input)
                     img = Image.open(BytesIO(response.content))
-                    img = h.rescale_img(img)
+                    img = rescale_img(img)
 
                     # Save image string
                     buffered = BytesIO()
@@ -273,17 +273,17 @@ class SketchBook:
         # Separated by binary and continouous fields since styling has to be chained into a single df.style call
         if len(binary_fields) > 0 and len(contin_fields) > 0:
             df = (
-                df.style.apply(h.color_t_f, subset=binary_fields)
-                .apply(h.color_magnitude, subset=contin_fields)
-                .apply(h.color_pos_neg, subset=diff_fields)
+                df.style.apply(color_t_f, subset=binary_fields)
+                .apply(color_magnitude, subset=contin_fields)
+                .apply(color_pos_neg, subset=diff_fields)
             )
         elif len(binary_fields) > 0:
-            df = df.style.apply(h.color_t_f, subset=binary_fields).apply(
-                h.color_pos_neg, subset=diff_fields
+            df = df.style.apply(color_t_f, subset=binary_fields).apply(
+                color_pos_neg, subset=diff_fields
             )
         elif len(contin_fields) > 0:
-            df = df.style.apply(h.color_magnitude, subset=contin_fields).apply(
-                h.color_pos_neg, subset=diff_fields
+            df = df.style.apply(color_magnitude, subset=contin_fields).apply(
+                color_pos_neg, subset=diff_fields
             )
         else:
             return df

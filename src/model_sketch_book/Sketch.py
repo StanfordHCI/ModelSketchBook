@@ -14,10 +14,10 @@ from sklearn.metrics import (
 import numpy as np
 from typing import List
 
-from msb_enums import OutputType, idMode, ModelType, SketchSortMode
-from SketchBook import SketchBook
-from Result import Result
-import helper_functions as h
+from .msb_enums import OutputType, idMode, ModelType, SketchSortMode
+from .SketchBook import SketchBook
+from .Result import Result
+from .helper_functions import *
 
 
 # Class definition of a sketch
@@ -40,7 +40,7 @@ class Sketch:
         threshold: float = 0.5,
     ):
         self.sb = sb
-        self.id = h.create_id(sb, idMode.Sketch)
+        self.id = create_id(sb, idMode.Sketch)
         self.concepts = concepts
         input_fields = [self.sb.concepts[c_id].input_field for c_id in self.concepts]
         self.input_fields = set([f for f in input_fields if f is not None])
@@ -137,6 +137,9 @@ class Sketch:
     def _readable_all_concepts(self):
         concept_strs = [self._readable_concept(c_id) for c_id in self.concepts]
         return ",".join(concept_strs)
+
+    def _get_diff_col(self, sketch_pred_col, ground_truth_col):
+        f"diff ({sketch_pred_col} - {ground_truth_col})"
 
     def _get_model_summary(self, dataset_id):
         assert (
@@ -289,7 +292,7 @@ class Sketch:
         diff_fields = []
         if ground_truth_col is not None:
             # Add diff column
-            diff_col = f"diff ({sketch_pred_col} - {ground_truth_col})"
+            diff_col = self._get_diff_col(sketch_pred_col, ground_truth_col)
             df[diff_col] = df[sketch_pred_col] - df[ground_truth_col]
             if output_type == OutputType.Binary:
                 binary_fields.append(ground_truth_col)

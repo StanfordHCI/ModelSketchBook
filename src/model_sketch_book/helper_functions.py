@@ -10,7 +10,7 @@ from io import BytesIO
 import requests
 import base64
 
-from msb_enums import idMode
+from .msb_enums import idMode
 
 
 # ID creation --------------------------------------

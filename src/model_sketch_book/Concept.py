@@ -8,10 +8,11 @@ import open_clip
 import random
 import openai
 
-from msb_enums import InputType, OutputType, idMode
-from SketchBook import SketchBook
-from Result import Result
-import helper_functions as h
+from .msb_enums import InputType, OutputType, idMode
+from .SketchBook import SketchBook
+from .Result import Result
+from .helper_functions import *
+
 from typing import Tuple, Dict
 
 # SETUP
@@ -49,7 +50,7 @@ class Concept:
         tune_params: Dict[str, any] = DEFAULT_TUNE_PARAMS,
     ):
         self.sb = sb
-        self.id = h.create_id(sb, idMode.Concept)
+        self.id = create_id(sb, idMode.Concept)
         self.concept_term = concept_term
         self.input_field = input_field
         self.output_type = output_type
@@ -243,9 +244,9 @@ class Concept:
     # Color cells based on concept score
     def _style_concept_score_col(self, df, col_name, output_type):
         if self._has_binary_output():
-            df = df.style.apply(h.color_t_f, subset=[col_name])
+            df = df.style.apply(color_t_f, subset=[col_name])
         elif output_type == OutputType.Continuous:
-            df = df.style.apply(h.color_magnitude, subset=[col_name]).set_table_styles(
+            df = df.style.apply(color_magnitude, subset=[col_name]).set_table_styles(
                 [
                     dict(
                         selector="th",
@@ -755,6 +756,27 @@ emoji_pattern = re.compile(
     re.UNICODE,
 )
 
+def parse_gpt_response(results, concept_term, debug=False):
+    results_arr = results.strip().split("\n")
+    
+    if ":" in results_arr[0]:
+        cur_results_isolated = [res.split(":")[1] for res in results_arr]
+    elif "-" in results_arr[0]:
+        cur_results_isolated = [res.split("-")[1] for res in results_arr]
+    elif "1." in results_arr[0]:
+        cur_results_isolated = [res.split(".")[1] for res in results_arr]
+    else:
+        raise Exception("Unexpected output format from GPT")
+
+    cur_results_isolated = [res.lower().strip() for res in cur_results_isolated]
+    cur_pred = [(res == concept_term) for res in cur_results_isolated]
+
+    if debug:
+        print(
+            f"cur_pred = {cur_pred}\ncur_results_isolated = {cur_results_isolated}\n\n"
+        )
+
+    return cur_pred, cur_results_isolated
 
 # Function to make a GPT-3 call and sanitize the output
 # - model: The GPT-3 model type to use
@@ -788,26 +810,10 @@ def get_gpt_response(
         return [cur_pred], [res]
 
     # Handle default batched case
-    results_arr = results.strip().split("\n")
     if debug:
         print(cur_prompt)
-        print(results_arr)
-    if ":" in results_arr[0]:
-        cur_results_isolated = [res.split(":")[1].lower() for res in results_arr]
-    elif "-" in results_arr[0]:
-        cur_results_isolated = [res.split("-")[1].lower() for res in results_arr]
-    elif "1." in results_arr[0]:
-        cur_results_isolated = [res.split(".")[1].lower() for res in results_arr]
-    else:
-        raise Exception("Unexpected output format from GPT")
-    cur_pred = [(res.strip() == concept_term) for res in cur_results_isolated]
-
-    if debug:
-        print(
-            f"cur_pred = {cur_pred}\ncur_results_isolated = {cur_results_isolated}\n\n"
-        )
-
-    return cur_pred, cur_results_isolated
+        print(results)
+    return parse_gpt_response(results, concept_term, debug)
 
 
 # Continuous (CLIP): Returns continuous 0-1 scores for the extent to which all text examples align with the concept term.
