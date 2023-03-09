@@ -139,7 +139,7 @@ class Sketch:
         return ",".join(concept_strs)
 
     def _get_diff_col(self, sketch_pred_col, ground_truth_col):
-        f"diff ({sketch_pred_col} - {ground_truth_col})"
+        return f"diff ({sketch_pred_col} - {ground_truth_col})"
 
     def _get_model_summary(self, dataset_id):
         assert (

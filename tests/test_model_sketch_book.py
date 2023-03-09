@@ -15,8 +15,7 @@ import pandas as pd
 import numpy as np
 import unittest
 
-import model_sketch_book.model_sketch_book as msb
-from model_sketch_book.msb_enums import InputType, OutputType, ModelType
+import model_sketch_book as msb
 from model_sketch_book.Concept import (
     Concept,
     ImageConcept,
@@ -40,9 +39,9 @@ def setup_sb():
     sb = msb.create_model_sketchbook(
         goal="Test MSB",
         schema={
-            "img_url": InputType.Image,
-            "text": InputType.Text,
-            "overall_rating_score": InputType.GroundTruth,
+            "img_url": msb.InputType.Image,
+            "text": msb.InputType.Text,
+            "overall_rating_score": msb.InputType.GroundTruth,
         },
         credentials={"organization": "org-HERE", "api_key": "sk-HERE"},
     )
@@ -66,7 +65,7 @@ def setup_sb():
 class TestConcepts(unittest.TestCase):
     def test_concept_Image(self):
         sb = setup_sb()
-        concept = ImageConcept(sb, "person", "img_url", OutputType.Continuous)
+        concept = ImageConcept(sb, "person", "img_url", msb.OutputType.Continuous)
         res = concept.run(dataset_id="d_0")
 
         assert (
@@ -79,7 +78,7 @@ class TestConcepts(unittest.TestCase):
 
     def test_concept_Text(self):
         sb = setup_sb()
-        concept = GPTTextConcept(sb, "person", "text", OutputType.Continuous)
+        concept = GPTTextConcept(sb, "person", "text", msb.OutputType.Continuous)
         res = concept.run(dataset_id="d_0")
 
         assert (
@@ -100,7 +99,7 @@ class TestConcepts(unittest.TestCase):
                 sb,
                 concept_term=c_term,
                 input_field="text",
-                output_type=OutputType.Binary,
+                output_type=msb.OutputType.Binary,
                 is_testing=True,  # Generates random preds
                 is_styled=False,
             )
@@ -127,7 +126,7 @@ class TestConcepts(unittest.TestCase):
             sb,
             concept_term=None,
             input_field=None,
-            output_type=OutputType.Binary,
+            output_type=msb.OutputType.Binary,
             subconcept_ids=["c_0", "c_1"],
             operator="AND",
         )
@@ -143,7 +142,7 @@ class TestConcepts(unittest.TestCase):
             sb,
             concept_term=None,
             input_field=None,
-            output_type=OutputType.Binary,
+            output_type=msb.OutputType.Binary,
             subconcept_ids=["c_0", "c_1"],
             operator="OR",
         )
@@ -161,7 +160,7 @@ class TestConcepts(unittest.TestCase):
             sb=sb,
             concept_term=None,
             input_field="text",
-            output_type=OutputType.Binary,
+            output_type=msb.OutputType.Binary,
             keywords=keywords,
             case_sensitive=False,
         )
@@ -243,7 +242,7 @@ class TestConcepts(unittest.TestCase):
     ## CONCEPT TUNING
     def test_tune_threshold(self):
         sb = setup_sb()
-        concept = ImageConcept(sb, "person", "img_url", OutputType.Continuous)
+        concept = ImageConcept(sb, "person", "img_url", msb.OutputType.Continuous)
         item_ids = sb.datasets["d_0"].get_item_ids()
         preds = {item_ids[i]: (0.2 * i) for i in range(len(item_ids))}
         res = Result(concept.id, preds)
@@ -261,7 +260,7 @@ class TestConcepts(unittest.TestCase):
 
     def test_tune_calibrate(self):
         sb = setup_sb()
-        concept = ImageConcept(sb, "person", "img_url", OutputType.Continuous)
+        concept = ImageConcept(sb, "person", "img_url", msb.OutputType.Continuous)
         item_ids = sb.datasets["d_0"].get_item_ids()
         preds = {item_ids[i]: (0.2 * i) for i in range(len(item_ids))}
         res = Result(concept.id, preds)
@@ -280,7 +279,7 @@ class TestConcepts(unittest.TestCase):
 
     def test_tune_normalize(self):
         sb = setup_sb()
-        concept = ImageConcept(sb, "person", "img_url", OutputType.Continuous)
+        concept = ImageConcept(sb, "person", "img_url", msb.OutputType.Continuous)
         item_ids = sb.datasets["d_0"].get_item_ids()
         preds = {item_ids[i]: (0.1 * (i + 1)) for i in range(len(item_ids))}
         res = Result(concept.id, preds)
@@ -305,21 +304,21 @@ class TestSketches(unittest.TestCase):
         preds = {}
 
         item_ids = sb.datasets["d_0"].get_item_ids()
-        concept = ImageConcept(sb, "a", "img_url", OutputType.Continuous)
+        concept = ImageConcept(sb, "a", "img_url", msb.OutputType.Continuous)
         concepts[concept.id] = concept
         vals = [0.6, -0.3, 0.54, 0.73, -0.62]
         preds[concept.id] = {item_ids[i]: vals[i] for i in range(N_ROWS)}
         res = Result(concept.id, preds[concept.id])
         concept.add_to_cache(dataset_id="d_0", res=res)
 
-        concept = GPTTextConcept(sb, "b", "text", OutputType.Continuous)
+        concept = GPTTextConcept(sb, "b", "text", msb.OutputType.Continuous)
         concepts[concept.id] = concept
         vals = [-0.53, 0.64, 0.17, 0.38, -0.73]
         preds[concept.id] = {item_ids[i]: vals[i] for i in range(N_ROWS)}
         res = Result(concept.id, preds[concept.id])
         concept.add_to_cache(dataset_id="d_0", res=res)
 
-        concept = GPTTextConcept(sb, "c", "text", OutputType.Binary)
+        concept = GPTTextConcept(sb, "c", "text", msb.OutputType.Binary)
         concepts[concept.id] = concept
         vals = [0.25, 0.91, -0.58, 0.08, -0.39]
         preds[concept.id] = {item_ids[i]: vals[i] for i in range(N_ROWS)}
@@ -337,8 +336,8 @@ class TestSketches(unittest.TestCase):
         sketch = Sketch(
             sb,
             concepts=[c.id for c in concepts.values()],
-            model_type=ModelType.LinearRegression,
-            output_type=OutputType.Continuous,
+            model_type=msb.ModelType.LinearRegression,
+            output_type=msb.OutputType.Continuous,
         )
 
         # Set ground-truth
@@ -377,8 +376,8 @@ class TestSketches(unittest.TestCase):
         sketch = Sketch(
             sb,
             concepts=[c.id for c in concepts.values()],
-            model_type=ModelType.ManualLinear,
-            output_type=OutputType.Continuous,
+            model_type=msb.ModelType.ManualLinear,
+            output_type=msb.OutputType.Continuous,
         )
         manual_weights = {
             concepts["c_0"].id: -0.4,
