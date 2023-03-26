@@ -100,7 +100,7 @@ msb.create_concept_model(sb)
 **Models**. Currently, text concepts can be served by GPT-3 (using the `text-davinci-002` model) or OpenCLIP (using the `ViT-B-32-quickgelu` model), and image concepts can only be served by OpenCLIP.
 
 ### Create sketches
-Then, you can combine concepts together into sketches with the following function. This function will display widgets to select concepts and an aggregator (only Linear Regression is supported currently).
+Then, you can combine concepts together into sketches with the following function. This function will display widgets to select concepts and an aggregator.
 ```
 msb.create_sketch_model(sb)
 ```
