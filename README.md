@@ -4,7 +4,32 @@
 <img src="./docs/media/ModelSketchBook.png" alt="ModelSketchBook logo" width="75%">
 </p>
 
+**ModelSketchBook** is a Python package introduced as part of an ACM CHI 2023 paper:
+
+**Model Sketching: Centering Concepts in Early-Stage Machine Learning Model Design**.
+*Michelle S. Lam, Zixian Ma, Anne Li, Izequiel Freitas, Dakuo Wang, James A. Landay, Michael S. Bernstein*.
+Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems (CHI '23).
+[PDF](https://hci.stanford.edu/publications/2023/Lam_ModelSketching_CHI23.pdf) | [Arxiv](https://arxiv.org/abs/2303.02884)
+
+## tl;dr
+Machine learning practitioners often end up tunneling on **low-level technical details** like model architectures and performance metrics. Could early model development instead focus on **high-level questions of which factors a model ought to pay attention to**? ModelSketchBook instantiates a vision of **model sketching**, a technical framework for rapidly iterating over a machine learning model's decision-making logic. Model sketching refocuses practitioner attention on **composing high-level, human-understandable concepts** that the model is expected to reason over (e.g., profanity, racism, or sarcasm in a content moderation task) using zero-shot concept instantiation.
+
+
 <img src="./docs/media/model_sketching_header.png" alt="Summary of the model sketching process from concepts to sketch models to evaluating and iterating" width="100%">
+
+With **ModelSketchBook**, you can **create concepts** using zero-shot methods,
+
+<p align="center">
+<img src="./docs/media/create_concept_model.gif" alt="Demo of the create_concept_model function" width="75%">
+</p>
+
+**create sketches** that combine these concept building blocks,
+<p align="center">
+<img src="./docs/media/create_sketch_model.gif" alt="Demo of the create_sketch_model function" width="75%">
+</p>
+
+and continue to iterate on concepts and sketches to explore the ML model design space before diving into technical implementation details.
+
 
 ## Installation
 First, you'll need to install this [package](https://pypi.org/project/model-sketch-book/) using PyPI.
@@ -56,10 +81,10 @@ Then, add your dataset from a Pandas dataframe (recommended: 40-50 rows). If the
 
 You should also specify exactly one dataset to be the **default dataset** with the `default` argument. It's recommended that your **training set** be the default dataset. With the notebook-widget functions documented here, the default dataset is used to set up concepts and sketches, and other datasets can only be used to evaluate trained sketches.
 ```
-listings = pd.read_csv("../data/michelle_data/listings.csv") # Insert logic to load your dataframe
+your_df = pd.read_csv("path_to_your_data/data.csv") # Insert logic to load your dataframe
 
 sb.add_dataset(
-    df=listings,
+    df=your_df,
     default=True,  # If dataset should be used by default, otherwise omit argument
 )
 ```
