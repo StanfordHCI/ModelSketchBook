@@ -1,5 +1,13 @@
 # ModelSketchBook — Getting Started
 
+[Paper](https://hci.stanford.edu/publications/2023/Lam_ModelSketching_CHI23.pdf) |
+[DOI](https://doi.org/10.1145/3544548.3581290) | 
+[Video](https://youtu.be/-zaeXENVTfk) |
+[Sample NB](https://github.com/StanfordHCI/ModelSketchBook/blob/main/example_nb/23_04_ModelSketchBook_example.ipynb) | 
+<a target="_blank" href="https://colab.research.google.com/github/StanfordHCI/ModelSketchBook/blob/main/example_nb/23_04_ModelSketchBook_example.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 <p align="center">
 <img src="./docs/media/ModelSketchBook.png" alt="ModelSketchBook logo" width="75%">
 </p>
@@ -30,6 +38,7 @@ With **ModelSketchBook**, you can **create concepts** using zero-shot methods,
 
 and continue to iterate on concepts and sketches to explore the ML model design space before diving into technical implementation details.
 
+> 🚧 This repo is a work-in-progress research prototype and will continue to be updated! It has not yet been tested in a wide variety of development setups, but see our [sample Colab notebook](https://colab.research.google.com/github/StanfordHCI/ModelSketchBook/blob/main/example_nb/23_04_ModelSketchBook_example.ipynb) for a working example.
 
 ## Installation
 First, you'll need to install this [package](https://pypi.org/project/model-sketch-book/) using PyPI.
